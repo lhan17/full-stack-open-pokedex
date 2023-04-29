@@ -13,11 +13,9 @@ jobs:
             - name: Say hello
               run: |
                   echo "Hello World!"
-        steps:
-            - name: Now it is
-              run: | 
+            - name: Print current date
+              run: |
                   echo $(date)
-        steps: 
             - name: Directory content
               run: |
-                  echo $(ls -l)
+                  ls -l
