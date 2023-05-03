@@ -14,3 +14,8 @@ app.get('/health', (req, res) => {
     // eslint-disable-next-line no-unreachable
     res.send('ok')
 })
+
+app.get('/test', (req, res) => {
+    // eslint-disable-next-line no-unreachable
+    res.send('ok')
+})
