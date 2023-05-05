@@ -4,7 +4,7 @@ on:
     push:
         branches:
             - master
-            # Note that your "main" branch might be called main instead of master
+            # note that your "main" branch might be called main instead of master
     pull_request:
         branches: [master]
         types: [opened, synchronize]
@@ -22,7 +22,6 @@ jobs:
             - name: Directory content
               run: |
                   ls -l
-
     simple_deployment_pipeline:
         runs-on: ubuntu-20.04
         steps:
@@ -34,9 +33,9 @@ jobs:
               run: npm install
             - name: Check style
               run: npm run eslint
-            - name: Test
+            - name: test
               run: npm run test
-            - name: E2E tests
+            - name: e2e tests
               uses: cypress-io/github-action@v5
               with:
                   build: npm run build
@@ -45,22 +44,20 @@ jobs:
                   wait-on: http://localhost:5000
                   record: false
             - name: Deployment failed
-              uses: rjstone/discord-webhook-notify@v1
-              if: failure()
-              with:
-                  severity: error
-                  details: Deployment Failed!
-                  webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-
+			  uses: rjstone/discord-webhook-notify@v1
+			  if: failure()
+		      with:
+				  severity: error
+				  details: Deployment Failed!
+				  webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
     deploy_to_render:
-        if: ${{ github.event_name == "push" }}
+        if: ${{ github.event_name == 'push' }}
         runs-on: ubuntu-20.04
         steps:
             - name: Trigger deployment
               run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_ID }}?key=${{ secrets.RENDER_API_KEY }}
-
     tag_release:
-        if: ${{ github.event_name == "push" }}
+        if: ${{ github.event_name == 'push' }}
         needs: [simple_deployment_pipeline]
         runs-on: ubuntu-20.04
         steps:
@@ -68,13 +65,14 @@ jobs:
             - name: Bump version and push tag
               uses: anothrNick/github-tag-action@1.61.0
               env:
-                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-                  DEFAULT_BUMP: patch
-                  NONE_STRING_TOKEN: '#skip'
-            - name: New version deployed
-              uses: rjstone/discord-webhook-notify@v1
-              if: success()
-              with:
-                  severity: info
-                  details: Deployment succeeded
-                  webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+                GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                DEFAULT_BUMP: patch
+                NONE_STRING_TOKEN: '#skip'
+					- name: New version deployed
+					  uses: rjstone/discord-webhook-notify@v1
+					  if: success()
+					  with:
+						severity: info
+						details: Deployment succeeded
+						webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+						
